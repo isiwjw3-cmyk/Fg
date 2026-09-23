@@ -1,0 +1,71 @@
+-- LocalScript: ใส่ไว้ใน StarterPlayerScripts หรือ StarterGui
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- 1. สร้าง ScreenGui หลักชื่อ "IU has"
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "IU has"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+-- 2. สร้างปุ่มสำหรับกด "เปิดเมนูหลัก"
+local openButton = Instance.new("TextButton")
+openButton.Name = "OpenMenuButton"
+openButton.Size = UDim2.new(0, 200, 0, 50)
+openButton.Position = UDim2.new(0.5, -100, 0.8, 0)
+openButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+openButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+openButton.TextSize = 18
+openButton.Font = Enum.Font.SourceSansBold
+openButton.Text = "เปิดเมนูหลัก"
+openButton.Parent = screenGui
+
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 8)
+buttonCorner.Parent = openButton
+
+-- 3. ฟังก์ชันการทำงานเมื่อกดปุ่มเปิดเมนูหลัก
+openButton.MouseButton1Click:Connect(function()
+	-- ซ่อนปุ่มเปิดเมนู
+	openButton.Visible = false
+
+	-- สร้างหน้าจอจอดำแบบเต็มจอ
+	local darkScreen = Instance.new("Frame")
+	darkScreen.Name = "DarkOverlay"
+	darkScreen.Size = UDim2.new(1, 0, 1, 0)
+	darkScreen.Position = UDim2.new(0, 0, 0, 0)
+	darkScreen.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	darkScreen.BackgroundTransparency = 1
+	darkScreen.ZIndex = 10
+	darkScreen.Parent = screenGui
+
+	-- เอฟเฟกต์ค่อยๆ ดำ (Fade in)
+	local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	local fadeTween = TweenService:Create(darkScreen, tweenInfo, {BackgroundTransparency = 0})
+	fadeTween:Play()
+	fadeTween.Completed:Wait()
+
+	-- ข้อความที่จะให้แสดง
+	local messageText = "อย่าหวังว่ากุจะให้สคริป ไอ้ควาย อย่าหิวให้มาก หัดสร้างเองซะบ้าง ไอ่แม็ก"
+
+	-- สร้าง TextLabel สำหรับแสดงข้อความ
+	local textLabel = Instance.new("TextLabel")
+	textLabel.Size = UDim2.new(0.8, 0, 0.4, 0)
+	textLabel.Position = UDim2.new(0.1, 0, 0.3, 0)
+	textLabel.BackgroundTransparency = 1
+	textLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+	textLabel.TextSize = 28
+	textLabel.Font = Enum.Font.SourceSansBold
+	textLabel.TextWrapped = true
+	textLabel.Text = ""
+	textLabel.ZIndex = 11
+	textLabel.Parent = darkScreen
+
+	-- พิมพ์ข้อความทีละตัวอักษร (Typewriter Effect)
+	for i = 1, #messageText do
+		textLabel.Text = string.sub(messageText, 1, i)
+		task.wait(0.05)
+	end
+end)
